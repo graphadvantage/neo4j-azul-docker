@@ -22,3 +22,6 @@ To launch:
 docker-compose up
 
 Neo4j directories will be exported to local for /data /logs /conf /import
+
+
+https://www.azul.com/downloads/?package=jdk
