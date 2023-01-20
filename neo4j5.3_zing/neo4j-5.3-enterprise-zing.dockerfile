@@ -3,18 +3,17 @@
 FROM debian:bullseye-slim
 
 # Prepare environment
-ARG ZING_STRING=jdk17.0.0
+ARG ZING_DIR=ZVM22.12.0.0
+ARG ZING_PACK=zing22.12.0.0-2-jdk17.0.5-linux_x64.tar.gz
+
 ENV JAVA_HOME=/opt/zing/zing17-ca-amd64
 
 RUN apt update \
-  && apt-get -qq -y --no-install-recommends install gnupg software-properties-common locales curl tzdata \
-  && echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen \
-  && locale-gen en_US.UTF-8 \
-  && mkdir -p ${JAVA_HOME} \
-  && curl -s https://repos.azul.com/azul-repo.key | gpg --dearmor -o /usr/share/keyrings/azul.gpg \
-  && echo "deb [arch=amd64 signed-by=/usr/share/keyrings/azul.gpg] https://repos.azul.com/zing/debian $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/zing.list \
-  && apt update \
-  && apt install zing-${ZING_STRING}
+    && apt install -y curl \
+    && mkdir -p ${JAVA_HOME} \
+    && curl --fail --silent --show-error --location --remote-name https://cdn.azul.com/zing-zvm/${ZING_DIR}/${ZING_PACK} \
+    && tar --strip-components=1 -xvzf ${ZING_PACK} -C ${JAVA_HOME} \
+    && rm -f ${ZING_PACK}
 
 ENV PATH="${JAVA_HOME}/bin:${PATH}" \
     NEO4J_SHA256=078aaf4da22ed43eae8164d8446b52c6d3751476db9000b83daa163dcf634bc2 \
